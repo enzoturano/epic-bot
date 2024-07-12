@@ -33,7 +33,7 @@ async def on_ready():
     await channel.send("Epic! Bot is online!")
     
     # Set bot's activity status
-    activity = discord.Game(name="Uzbadul Khazâd ai-menu, ganazul farnâkh râd, nadadûn ârakh Tûranor. \n - Bothûl")
+    activity = discord.Game(name="Epic! Shard")
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print("Slash commands synced")
 

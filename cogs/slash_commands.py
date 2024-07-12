@@ -16,7 +16,7 @@ except TypeError:
     raise ValueError("One or more environment variables are missing or not set correctly.")
 
 class ConfirmButton(View):
-    def __init__(self, user, embed, target_channel, moderation_channel, bot, title_type):
+    def __init__(self, user, embed, target_channel, moderation_channel, bot, title_type, files):
         super().__init__(timeout=60)  # Timeout after 60 seconds
         self.user = user
         self.embed = embed
@@ -24,29 +24,34 @@ class ConfirmButton(View):
         self.moderation_channel = moderation_channel
         self.bot = bot
         self.title_type = title_type
-        self.value = None
+        self.files = files
 
-    @discord.ui.button(label="Confirmar", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green)
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.user:
-            await interaction.response.send_message("Você não está autorizado(a) a confirmar esta mensagem.", ephemeral=True)
+            await interaction.response.send_message("You are not authorized to confirm this message.", ephemeral=True)
             return
-        
+
+        await interaction.response.send_message("Your post has been confirmed and published!", ephemeral=True)
+
+        # Send the embed and files to the target channel
         await self.target_channel.send(embed=self.embed)
         
+        if self.files:
+            await self.target_channel.send(files=[await file.to_file() for file in self.files])
+
         # Send a message to the moderation channel
         await self.moderation_channel.send(f"{self.user.display_name} ({self.user.id}) postou um {self.title_type}.")
         
-        await interaction.response.send_message("Sua publicação foi confirmada!", ephemeral=True)
         self.stop()
 
-    @discord.ui.button(label="Cancelar", style=discord.ButtonStyle.red)
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
     async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.user:
-            await interaction.response.send_message("Você não está autorizado(a) a cancelar esta mensagem.", ephemeral=True)
+            await interaction.response.send_message("You are not authorized to cancel this message.", ephemeral=True)
             return
         
-        await interaction.response.send_message("Sua publicação foi cancelada.", ephemeral=True)
+        await interaction.response.send_message("Your post has been canceled.", ephemeral=True)
         self.stop()
 
 class SlashCommands(commands.Cog):
@@ -98,9 +103,12 @@ class SlashCommands(commands.Cog):
                 for url in file_urls:
                     embed.add_field(name="File URL", value=url, inline=False)
 
-            # Send preview to the user
-            view = ConfirmButton(user, embed, self.bot.get_channel(channel_id), self.bot.get_channel(MODERATION_CHANNEL_ID), self.bot, title_type)
-            await dm_channel.send("Aqui está a prévia da sua publicação. Deseja confirmar?", embed=embed, view=view)
+            # Send preview to the user with files
+            view = ConfirmButton(user, embed, self.bot.get_channel(channel_id), self.bot.get_channel(MODERATION_CHANNEL_ID), self.bot, title_type, file_attachments)
+            await dm_channel.send("Here is a preview of your post:", embed=embed, view=view)
+            
+            if file_attachments:
+                await dm_channel.send("Here are the files you included:", files=[await file.to_file() for file in file_attachments])
 
         except Exception as e:
             await dm_channel.send(f"Ocorreu um erro: {e}")

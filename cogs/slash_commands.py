@@ -10,6 +10,7 @@ load_dotenv()
 try:
     ANNOUNCE_CHANNEL_ID = int(os.getenv('ANNOUNCE_CHANNEL_ID'))
     BACKGROUNDS_CHANNEL_ID = int(os.getenv('BACKGROUNDS_CHANNEL_ID'))
+    BUILDS_CHANNEL_ID = int(os.getenv('BUILDS_CHANNEL_ID'))
     MODERATION_CHANNEL_ID = int(os.getenv('MODERATION_CHANNEL_ID'))
     MAIN_GUILD_ID = int(os.getenv('MAIN_GUILD_ID'))
 except TypeError:
@@ -17,7 +18,7 @@ except TypeError:
 
 class ConfirmButton(View):
     def __init__(self, user, embed, target_channel, moderation_channel, bot, title_type, files):
-        super().__init__(timeout=60)  # Timeout after 60 seconds
+        super().__init__(timeout=60) 
         self.user = user
         self.embed = embed
         self.target_channel = target_channel
@@ -29,18 +30,15 @@ class ConfirmButton(View):
     @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green)
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.user:
-            await interaction.response.send_message("You are not authorized to confirm this message.", ephemeral=True)
+            await interaction.response.send_message("Você não pode confirmar isso.", ephemeral=True)
             return
 
-        await interaction.response.send_message("Your post has been confirmed and published!", ephemeral=True)
-
-        # Send the embed and files to the target channel
+        await interaction.response.send_message("A sua publicação foi confirmada e publicada!", ephemeral=True)
         await self.target_channel.send(embed=self.embed)
         
         if self.files:
             await self.target_channel.send(files=[await file.to_file() for file in self.files])
 
-        # Send a message to the moderation channel
         await self.moderation_channel.send(f"{self.user.display_name} ({self.user.id}) postou um {self.title_type}.")
         
         self.stop()
@@ -48,18 +46,18 @@ class ConfirmButton(View):
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
     async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.user:
-            await interaction.response.send_message("You are not authorized to cancel this message.", ephemeral=True)
+            await interaction.response.send_message("Você não pode cancelar essa mensagem.", ephemeral=True)
             return
         
-        await interaction.response.send_message("Your post has been canceled.", ephemeral=True)
+        await interaction.response.send_message("Sua publicação foi cancelada.", ephemeral=True)
         self.stop()
 
 class SlashCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # Register the command with a specific guild ID
         self.bot.tree.add_command(self.announce, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.backgrounds, guild=discord.Object(id=MAIN_GUILD_ID))
+        self.bot.tree.add_command(self.build, guild=discord.Object(id=MAIN_GUILD_ID))
 
     @app_commands.command(name="anuncio", description="Envia um anúncio RP no #anuncios-roleplay")
     async def announce(self, interaction: discord.Interaction):
@@ -90,7 +88,6 @@ class SlashCommands(commands.Cog):
             file_urls = []
             file_attachments = []
 
-            # Check if files were provided as URLs or attachments
             if files_to_include.content.lower() != 'nenhum':
                 if files_to_include.attachments:
                     file_attachments = files_to_include.attachments
@@ -103,12 +100,11 @@ class SlashCommands(commands.Cog):
                 for url in file_urls:
                     embed.add_field(name="File URL", value=url, inline=False)
 
-            # Send preview to the user with files
             view = ConfirmButton(user, embed, self.bot.get_channel(channel_id), self.bot.get_channel(MODERATION_CHANNEL_ID), self.bot, title_type, file_attachments)
-            await dm_channel.send("Here is a preview of your post:", embed=embed, view=view)
+            await dm_channel.send("Aqui está uma prévia da sua publicação:", embed=embed, view=view)
             
             if file_attachments:
-                await dm_channel.send("Here are the files you included:", files=[await file.to_file() for file in file_attachments])
+                await dm_channel.send("Esses são os arquivos que você anexou:", files=[await file.to_file() for file in file_attachments])
 
         except Exception as e:
             await dm_channel.send(f"Ocorreu um erro: {e}")

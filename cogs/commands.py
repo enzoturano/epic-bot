@@ -20,11 +20,6 @@ class Commands(commands.Cog):
         embed = discord.Embed(title="Caminho da Sabedoria 🧙‍♂️", description="https://homebrewery.naturalcrit.com/share/afJ-Pm3kb31W", color=discord.Color.yellow())
         await ctx.send(embed=embed)
 
-    # @commands.command(help="Link para as Facções.")
-    # async def faccoes(self, ctx):
-    #     embed = discord.Embed(title="Facções 🛡️", description="https://homebrewery.naturalcrit.com/share/aNJcG_QgiyGt", color=discord.Color.yellow())
-    #     await ctx.send(embed=embed)
-
     @commands.command()
     async def comandos(self, ctx):
         embed = discord.Embed(title="Meus Comandos", description="Aqui está a lista de todos os comandos disponíveis:", color=discord.Color.yellow())

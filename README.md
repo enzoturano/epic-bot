@@ -30,10 +30,6 @@ O Bothûl está em desenvolvimento ativo. Novas funcionalidades são constanteme
 
 Ideias e sugestões da comunidade são sempre bem-vindas! Se você tem uma ideia para uma nova funcionalidade ou melhoria, não hesite em compartilhar.
 
-## Contato
-
-Para mais informações ou para reportar problemas, entre em contato com os administradores do servidor Epic! no Discord.
-
 ---
 
 Bothûl: Elevando a experiência de roleplay no Epic! um comando por vez.

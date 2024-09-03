@@ -32,6 +32,10 @@ Para saber mais sobre o Epic! Shard: https://github.com/igorrturano/Epic-Server
 
 Ideias e sugestões da comunidade são sempre bem-vindas! Se você tem uma ideia para uma nova funcionalidade ou melhoria, não hesite em compartilhar.
 
+## Saiba mais
+[Site Oficial](https://epic-shard.com/)
+[Repositório Oficial](https://github.com/igorrturano/Epic-Server)
+[Discord](https://discord.com/invite/epic-shard)
 ---
 
 Bothûl: Elevando a experiência de roleplay no Epic! um comando por vez.

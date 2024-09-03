@@ -34,8 +34,8 @@ Ideias e sugestões da comunidade são sempre bem-vindas! Se você tem uma ideia
 
 ## Saiba mais
 
- [Site Oficial](https://epic-shard.com/)
- [Repositório](https://github.com/igorrturano/Epic-Server)
+ [Site Oficial](https://epic-shard.com/) <br/>
+ [Repositório](https://github.com/igorrturano/Epic-Server) <br/>
  [Discord](https://discord.com/invite/epic-shard)
  
 ---

@@ -4,8 +4,9 @@ from discord import app_commands
 from discord.ui import Button, View
 import os
 from dotenv import load_dotenv
+from api_client import query_documents
 
-load_dotenv()
+load_dotenv(override=True)
 
 try:
     ANNOUNCE_CHANNEL_ID = int(os.getenv('ANNOUNCE_CHANNEL_ID'))
@@ -13,6 +14,7 @@ try:
     BUILDS_CHANNEL_ID = int(os.getenv('BUILDS_CHANNEL_ID'))
     MODERATION_CHANNEL_ID = int(os.getenv('MODERATION_CHANNEL_ID'))
     MAIN_GUILD_ID = int(os.getenv('MAIN_GUILD_ID'))
+    STAFF_CHANNEL_ID = int(os.getenv('STAFF_CHANNEL_ID'))
 except TypeError:
     raise ValueError("One or more environment variables are missing or not set correctly.")
 
@@ -58,6 +60,7 @@ class SlashCommands(commands.Cog):
         self.bot.tree.add_command(self.announce, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.backgrounds, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.build, guild=discord.Object(id=MAIN_GUILD_ID))
+        self.bot.tree.add_command(self.query, guild=discord.Object(id=MAIN_GUILD_ID))
 
     @app_commands.command(name="anuncio", description="Envia um anúncio RP no #anuncios-roleplay")
     async def announce(self, interaction: discord.Interaction):
@@ -68,6 +71,11 @@ class SlashCommands(commands.Cog):
     async def backgrounds(self, interaction: discord.Interaction):
         await interaction.response.send_message("Olhe seu privado para continuarmos a postagem.", ephemeral=True)
         await self.send_dm(interaction.user, BACKGROUNDS_CHANNEL_ID, "background", "a história do seu personagem", "personagem", "seu background")
+
+    @app_commands.command(name="build", description="Envia uma build no #epic-builds")
+    async def build(self, interaction: discord.Interaction):
+        await interaction.response.send_message("Olhe seu privado para continuarmos a postagem.", ephemeral=True)
+        await self.send_dm(interaction.user, BUILDS_CHANNEL_ID, "build", "a build do seu personagem", "build", "sua build")
 
     async def send_dm(self, user: discord.User, channel_id: int, title_type: str, description_prompt: str, title_prompt: str, success_message: str):
         def check(m):
@@ -108,6 +116,50 @@ class SlashCommands(commands.Cog):
 
         except Exception as e:
             await dm_channel.send(f"Ocorreu um erro: {e}")
+
+    @app_commands.command(name="query", description="Consulta os logs de conversas usando a API do Epic Brain")
+    async def query(self, interaction: discord.Interaction, question: str, max_results: int = 5):
+        # Check if the command is being used in the staff channel
+        if interaction.channel_id != STAFF_CHANNEL_ID:
+            await interaction.response.send_message(
+                "Este comando só pode ser usado no canal de staff!", 
+                ephemeral=True
+            )
+            return
+
+        await interaction.response.defer()
+
+        try:
+            results = query_documents(question, max_results)
+            
+            embed = discord.Embed(
+                title="Resultados da Consulta",
+                description=f"Pergunta: {question}",
+                color=discord.Color.blue()
+            )
+
+            if results and isinstance(results, dict):
+                # Add the answer as the main content
+                embed.add_field(
+                    name="Resposta",
+                    value=results.get('answer', 'Sem resposta'),
+                    inline=False
+                )
+                
+            else:
+                embed.add_field(
+                    name="Sem resultados",
+                    value="Nenhum resultado encontrado para sua consulta.",
+                    inline=False
+                )
+
+            await interaction.followup.send(embed=embed)
+
+        except Exception as e:
+            await interaction.followup.send(
+                f"Ocorreu um erro ao consultar os documentos: {str(e)}",
+                ephemeral=True
+            )
 
 async def setup(bot):
     await bot.add_cog(SlashCommands(bot))

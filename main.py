@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 ANNOUNCE_CHANNEL_ID = int(os.getenv('ANNOUNCE_CHANNEL_ID'))
 MAIN_GUILD_ID = int(os.getenv('MAIN_GUILD_ID'))

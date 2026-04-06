@@ -15,8 +15,11 @@ try:
     MODERATION_CHANNEL_ID = int(os.getenv('MODERATION_CHANNEL_ID'))
     MAIN_GUILD_ID = int(os.getenv('MAIN_GUILD_ID'))
     STAFF_CHANNEL_ID = int(os.getenv('STAFF_CHANNEL_ID'))
+    STAFF_ANNOUNCE_CHANNEL_ID = int(os.getenv('STAFF_ANNOUNCE_CHANNEL_ID'))
 except TypeError:
     raise ValueError("One or more environment variables are missing or not set correctly.")
+
+ALLOWED_STAFF_ROLES = {1261474104301850675, 1261348549824876544}  # World Builder, Admin
 
 class ConfirmButton(View):
     def __init__(self, user, embed, target_channel, moderation_channel, bot, title_type, files):
@@ -61,6 +64,7 @@ class SlashCommands(commands.Cog):
         self.bot.tree.add_command(self.backgrounds, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.build, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.query, guild=discord.Object(id=MAIN_GUILD_ID))
+        self.bot.tree.add_command(self.announce_staff, guild=discord.Object(id=MAIN_GUILD_ID))
 
     @app_commands.command(name="anuncio", description="Envia um anúncio RP no #anuncios-roleplay")
     async def announce(self, interaction: discord.Interaction):

@@ -81,6 +81,15 @@ class SlashCommands(commands.Cog):
         await interaction.response.send_message("Olhe seu privado para continuarmos a postagem.", ephemeral=True)
         await self.send_dm(interaction.user, BUILDS_CHANNEL_ID, "build", "a build do seu personagem", "build", "sua build")
 
+    @app_commands.command(name="anuncio-staff", description="Envia um anúncio no canal de staff (apenas Staff)")
+    async def announce_staff(self, interaction: discord.Interaction):
+        user_role_ids = {role.id for role in interaction.user.roles}
+        if not user_role_ids & ALLOWED_STAFF_ROLES:
+            await interaction.response.send_message("Você não tem permissão para usar este comando.", ephemeral=True)
+            return
+        await interaction.response.send_message("Olhe seu privado para continuarmos o anuncio.", ephemeral=True)
+        await self.send_dm(interaction.user, STAFF_ANNOUNCE_CHANNEL_ID, "anúncio", "o anúncio", "anúncio", "seu anúncio")
+
     async def send_dm(self, user: discord.User, channel_id: int, title_type: str, description_prompt: str, title_prompt: str, success_message: str):
         def check(m):
             return m.author == user and isinstance(m.channel, discord.DMChannel)

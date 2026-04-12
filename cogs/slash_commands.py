@@ -112,7 +112,7 @@ class SlashCommands(commands.Cog):
         await interaction.response.send_message("Olhe seu privado para continuarmos o anuncio.", ephemeral=True)
         await self.send_dm(interaction.user, STAFF_ANNOUNCE_CHANNEL_ID, "anúncio", "o anúncio", "anúncio", "seu anúncio")
 
-    async def send_dm(self, user: discord.User, channel_id: int, title_type: str, description_prompt: str, title_prompt: str, success_message: str):
+    async def send_dm(self, user: discord.User, channel_id: int, title_type: str, description_prompt: str, title_prompt: str, success_message: str, forum: bool = False):
         def check(m):
             return m.author == user and isinstance(m.channel, discord.DMChannel)
         
@@ -143,7 +143,8 @@ class SlashCommands(commands.Cog):
                 for url in file_urls:
                     embed.add_field(name="File URL", value=url, inline=False)
 
-            view = ConfirmButton(user, embed, self.bot.get_channel(channel_id), self.bot.get_channel(MODERATION_CHANNEL_ID), self.bot, title_type, file_attachments)
+            button_class = ForumConfirmButton if forum else ConfirmButton
+            view = button_class(user, embed, self.bot.get_channel(channel_id), self.bot.get_channel(MODERATION_CHANNEL_ID), self.bot, title_type, file_attachments)
             await dm_channel.send("Aqui está uma prévia da sua publicação:", embed=embed, view=view)
             
             if file_attachments:

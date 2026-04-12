@@ -16,6 +16,7 @@ try:
     MAIN_GUILD_ID = int(os.getenv('MAIN_GUILD_ID'))
     STAFF_CHANNEL_ID = int(os.getenv('STAFF_CHANNEL_ID'))
     STAFF_ANNOUNCE_CHANNEL_ID = int(os.getenv('STAFF_ANNOUNCE_CHANNEL_ID'))
+    MERCADO_CHANNEL_ID = int(os.getenv('MERCADO_CHANNEL_ID'))
 except TypeError:
     raise ValueError("One or more environment variables are missing or not set correctly.")
 

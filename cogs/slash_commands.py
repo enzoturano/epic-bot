@@ -58,6 +58,28 @@ class ConfirmButton(View):
         await interaction.response.send_message("Sua publicação foi cancelada.", ephemeral=True)
         self.stop()
 
+class ForumConfirmButton(ConfirmButton):
+    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green)
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if interaction.user != self.user:
+            await interaction.response.send_message("Você não pode confirmar isso.", ephemeral=True)
+            return
+
+        await interaction.response.send_message("A sua publicação foi confirmada e publicada!", ephemeral=True)
+
+        files = [await f.to_file() for f in self.files] if self.files else []
+        await self.target_channel.create_thread(
+            name=self.embed.title,
+            embed=self.embed,
+            files=files,
+        )
+
+        await self.moderation_channel.send(
+            f"{self.user.display_name} ({self.user.id}) postou um {self.title_type}."
+        )
+
+        self.stop()
+
 class SlashCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

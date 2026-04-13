@@ -70,7 +70,7 @@ class ForumConfirmButton(ConfirmButton):
         files = [await f.to_file() for f in self.files] if self.files else []
         await self.target_channel.create_thread(
             name=self.embed.title,
-            embed=self.embed,
+            content=self.embed.description,
             files=files,
         )
 

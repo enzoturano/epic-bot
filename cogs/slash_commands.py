@@ -88,6 +88,7 @@ class SlashCommands(commands.Cog):
         self.bot.tree.add_command(self.build, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.query, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.announce_staff, guild=discord.Object(id=MAIN_GUILD_ID))
+        self.bot.tree.add_command(self.mercado, guild=discord.Object(id=MAIN_GUILD_ID))
 
     @app_commands.command(name="anuncio", description="Envia um anúncio RP no #anuncios-roleplay")
     async def announce(self, interaction: discord.Interaction):
@@ -112,6 +113,19 @@ class SlashCommands(commands.Cog):
             return
         await interaction.response.send_message("Olhe seu privado para continuarmos o anuncio.", ephemeral=True)
         await self.send_dm(interaction.user, STAFF_ANNOUNCE_CHANNEL_ID, "anúncio", "o anúncio", "anúncio", "seu anúncio")
+
+    @app_commands.command(name="mercado", description="Anuncia o que você quer vender ou comprar no #mercado")
+    async def mercado(self, interaction: discord.Interaction):
+        await interaction.response.send_message("Olhe seu privado para continuarmos o anúncio.", ephemeral=True)
+        await self.send_dm(
+            interaction.user,
+            MERCADO_CHANNEL_ID,
+            "anúncio de mercado",
+            "o que você quer vender ou comprar",
+            "anúncio de mercado",
+            "seu anúncio de mercado",
+            forum=True,
+        )
 
     async def send_dm(self, user: discord.User, channel_id: int, title_type: str, description_prompt: str, title_prompt: str, success_message: str, forum: bool = False):
         def check(m):

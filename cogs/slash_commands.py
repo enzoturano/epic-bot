@@ -11,7 +11,6 @@ load_dotenv(override=True)
 try:
     ANNOUNCE_CHANNEL_ID = int(os.getenv('ANNOUNCE_CHANNEL_ID'))
     BACKGROUNDS_CHANNEL_ID = int(os.getenv('BACKGROUNDS_CHANNEL_ID'))
-    BUILDS_CHANNEL_ID = int(os.getenv('BUILDS_CHANNEL_ID'))
     MODERATION_CHANNEL_ID = int(os.getenv('MODERATION_CHANNEL_ID'))
     MAIN_GUILD_ID = int(os.getenv('MAIN_GUILD_ID'))
     STAFF_CHANNEL_ID = int(os.getenv('STAFF_CHANNEL_ID'))
@@ -85,7 +84,6 @@ class SlashCommands(commands.Cog):
         self.bot = bot
         self.bot.tree.add_command(self.announce, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.backgrounds, guild=discord.Object(id=MAIN_GUILD_ID))
-        self.bot.tree.add_command(self.build, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.query, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.announce_staff, guild=discord.Object(id=MAIN_GUILD_ID))
         self.bot.tree.add_command(self.mercado, guild=discord.Object(id=MAIN_GUILD_ID))
@@ -99,11 +97,6 @@ class SlashCommands(commands.Cog):
     async def backgrounds(self, interaction: discord.Interaction):
         await interaction.response.send_message("Olhe seu privado para continuarmos a postagem.", ephemeral=True)
         await self.send_dm(interaction.user, BACKGROUNDS_CHANNEL_ID, "background", "a história do seu personagem", "personagem", "seu background")
-
-    @app_commands.command(name="build", description="Envia uma build no #epic-builds")
-    async def build(self, interaction: discord.Interaction):
-        await interaction.response.send_message("Olhe seu privado para continuarmos a postagem.", ephemeral=True)
-        await self.send_dm(interaction.user, BUILDS_CHANNEL_ID, "build", "a build do seu personagem", "build", "sua build")
 
     @app_commands.command(name="anuncio-staff", description="Envia um anúncio no canal de staff (apenas Staff)")
     async def announce_staff(self, interaction: discord.Interaction):

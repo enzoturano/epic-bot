@@ -59,6 +59,7 @@ class ConfirmButton(View):
         self.stop()
 
 class ForumConfirmButton(ConfirmButton):
+    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green)
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.user:
             await interaction.response.send_message("Você não pode confirmar isso.", ephemeral=True)
